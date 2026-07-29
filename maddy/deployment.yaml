@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maddy
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: maddy
+          image: docker.io/foxcpp/maddy
+          ports:
+            - containerPort: 2525
+              name: smtp
+          volumeMounts:
+            - name: maddy-config
+              mountPath: /data/maddy.conf
+              subPath: maddy.conf
+            - name: maddy-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+            limits:
+              memory: "256Mi"
+              cpu: "1000m"
+      volumes:
+        - name: maddy-config
+          configMap:
+            name: maddy-config
+        - name: maddy-data
+          persistentVolumeClaim:
+            claimName: maddy-data

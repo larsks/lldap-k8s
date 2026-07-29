@@ -1,0 +1,14 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: lldap
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 3890
+        hostPort: 3890
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 17170
+        hostPort: 17170
+        listenAddress: "127.0.0.1"
+        protocol: TCP

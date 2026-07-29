@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lldap
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - name: lldap
+          image: lldap
+          envFrom:
+            - secretRef:
+                name: lldap-secret
+          ports:
+            - containerPort: 3890
+              name: ldap
+              hostPort: 3890
+            - containerPort: 17170
+              name: ui
+              hostPort: 17170
+          volumeMounts:
+            - name: lldap-config
+              mountPath: /data/lldap_config.toml
+              subPath: lldap_config.toml
+            - name: lldap-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+      volumes:
+        - name: lldap-config
+          configMap:
+            name: lldap-config
+        - name: lldap-data
+          persistentVolumeClaim:
+            claimName: lldap-data
