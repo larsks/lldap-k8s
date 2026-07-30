@@ -8,7 +8,7 @@ terraform {
 }
 
 variable "lldap_admin_password" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -29,7 +29,14 @@ resource "lldap_user_attribute" "ssh-key" {
 resource "lldap_user_attribute" "wireguard-key" {
   name           = "wireguard-key"
   is_editable    = true
+  is_list        = true
   attribute_type = "STRING"
+}
+
+resource "lldap_user" "authbot" {
+  username     = "authbot"
+  display_name = "Auth Bot"
+  email        = "authbot@massopen.cloud"
 }
 
 resource "lldap_user" "larsks" {
@@ -49,5 +56,14 @@ resource "lldap_user_attribute_assignment" "larsks-ssh-key" {
 resource "lldap_user_attribute_assignment" "larsks-wireguard-key" {
   user_id      = lldap_user.larsks.id
   attribute_id = lldap_user_attribute.wireguard-key.id
-  value        = [file("wireguard-keys/larsks")]
+  value        = [file("wireguard-keys/larsks-home"), file("wireguard-keys/larsks-laptop")]
+}
+
+data "lldap_group" "lldap_strict_readonly" {
+  id = 3
+}
+
+resource "lldap_user_memberships" "authbot" {
+  user_id   = lldap_user.authbot.id
+  group_ids = toset([data.lldap_group.lldap_strict_readonly.id])
 }
