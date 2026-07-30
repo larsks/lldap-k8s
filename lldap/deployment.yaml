@@ -34,26 +34,7 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "250m"
-        - name: bootstrap
-          image: lldap
-          command: ["/bin/bash", "-c", "/app/bootstrap.sh && sleep infinity"]
-          env:
-            - name: LLDAP_URL
-              value: "http://localhost:17170"
-            - name: LLDAP_ADMIN_USERNAME
-              value: "admin"
-            - name: LLDAP_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: lldap-secret
-                  key: LLDAP_LDAP_USER_PASS
-          volumeMounts:
-            - name: lldap-schemas
-              mountPath: /bootstrap/user-schemas
       volumes:
-        - name: lldap-schemas
-          configMap:
-            name: lldap-schemas
         - name: lldap-config
           configMap:
             name: lldap-config

@@ -19,9 +19,6 @@ configMapGenerator:
   - name: lldap-config
     files:
       - files/lldap_config.toml
-  - name: lldap-schemas
-    files:
-      - files/userschema.json
 
 images:
   - name: lldap
